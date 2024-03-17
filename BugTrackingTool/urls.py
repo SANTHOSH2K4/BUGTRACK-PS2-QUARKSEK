@@ -51,5 +51,6 @@ urlpatterns = [
     path('assign-tester/<int:request_id>/', views.assign_tester, name='assign_tester'),
     path('admin/', admin.site.urls),
     path('projectmanagerpage/', views.testing_requests),  # Default view
-    path('submit_url/',views.submit_url,name='submit_url')
+    path('submit_url/',views.submit_url,name='submit_url'),
+    path('assigned_requests_customer/',views.assigned_requests_customer,name='assigned_requests_customer')
 ]

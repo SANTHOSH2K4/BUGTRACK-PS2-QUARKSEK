@@ -594,6 +594,25 @@ def manager_home(request):
             connection.close()
     return render(request,'manager_home.html',{'data':data})
 
+def assigned_requests_customer(request):
+    conn = mysql.connector.connect(**config)
+    cursor = conn.cursor()
+
+    # Fetch data from the database for the first query
+    query = "SELECT CAST(req_ID AS CHAR), requested_at, url, fname, status,assignedto,test_status,tester_comment FROM requests where status != 'Under Review'"
+    cursor.execute(query)
+    rows = cursor.fetchall()
+
+    alert=request.session.get('alert')
+    if(alert):
+        context={'show_alert1':alert,'rows':rows}
+        request.session['alert'] = ''
+    else:
+        context = {'rows': rows}
+
+    # Render the template with context data
+    return render(request, 'assigned_requests_customer.html', context)
+
 def customer_requests(request):
     custid = int(request.POST.get('custID'))
     print(custid)
