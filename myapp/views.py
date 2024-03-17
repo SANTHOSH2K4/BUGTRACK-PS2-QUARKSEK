@@ -469,15 +469,8 @@ def newTester(request):
         rows = cursor.fetchall()
         print(data)
         print(rows)
-        req_ID=int(data[0][3])
-        cursor.execute(f"select test_status,tester_comment from requests where req_ID={req_ID}")
-        row=cursor.fetchall()
-        req_status=row[0][0]
-        req_status_desc=row[0][1]
-        if req_status is None:
-            req_status == ''
-        if req_status_desc is None:
-            req_status_desc==''
+
+
     except mysql.connector.Error as err:
         print("Error:", err)
         err+='id is'+id
@@ -485,7 +478,7 @@ def newTester(request):
     finally:
             cursor.close() 
             connection.close()
-    return render(request,'newTester.html',{'data':data,'rows':rows,'req_status':req_status,'req_status_desc':req_status_desc})
+    return render(request,'newTester.html',{'data':data,'rows':rows})
 
 def bugraise(request):
     print("from bugraise")

@@ -31,15 +31,17 @@ nav ul li {
     margin-right: 10px;
 }
 
-nav ul li a {
+nav ul li button {
     color: #fff; /* White */
-    text-decoration: none;
+    background-color: transparent;
+    border: none;
     padding: 10px 20px;
     border-radius: 5px;
+    cursor: pointer;
     transition: background-color 0.3s;
 }
 
-nav ul li a:hover {
+nav ul li button:hover {
     background-color: #0056b3; /* Darker Sky Blue */
 }
 
@@ -83,6 +85,7 @@ th {
 .popup-update-btn,
 .popup-assign-btn {
     color: #fff; /* White */
+    background-color: #007bff; /* Sky Blue */
     border: none;
     padding: 8px 16px;
     border-radius: 5px;
@@ -90,16 +93,6 @@ th {
     text-transform: uppercase;
     font-weight: bold;
     transition: background-color 0.3s;
-}
-
-.update-status-btn,
-.popup-update-btn {
-    background-color: #007bff; /* Sky Blue */
-}
-
-.assign-btn,
-.popup-assign-btn {
-    background-color: #007bff; /* Red */
 }
 
 .update-status-btn:hover,
@@ -163,25 +156,8 @@ th {
     margin-bottom: 10px; /* Increase the margin-bottom as needed */
 }
 
-.active a {
+.active button {
     background-color: #0056b3; /* Darker Sky Blue */
-    color: #fff; /* White */
-}
-
-/* Media queries for responsive layout */
-@media screen and (max-width: 768px) {
-    table {
-        font-size: 14px;
-    }
-    th, td {
-        padding: 8px;
-    }
-    .action-column {
-        width: 100px; /* Adjust column width for smaller screens */
-    }
-    .popup {
-        width: 250px; /* Adjust popup width for smaller screens */
-    }
 }
 
 </style>
@@ -191,7 +167,7 @@ th {
         <ul>
             <li><a href ='/manager_home/'>Home</a></li>
             <li class="active"><form action="/customer_requests/" method="post">{% csrf_token %}<input type="hidden" name="custID" value="{{ ID }}"><button type="submit">Pending Requests for Customer {{ ID }}</button></form></li>
-            <li class="active"><form action="/assigned_requests_customer/" method="post">{% csrf_token %}<input type="hidden" name="custID" value="{{ ID }}"><button>Assigned Requests for Customer {{ ID }}</button></form></li>
+            <li ><form action="/assigned_requests_customer/" method="post">{% csrf_token %}<input type="hidden" name="custID" value="{{ ID }}"><button>Assigned Requests for Customer {{ ID }}</button></form></li>
         </ul>
     </nav>
     <div class="container">

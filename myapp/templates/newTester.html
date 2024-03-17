@@ -102,7 +102,9 @@
                       </div>
                       {% endif %}
                         {% endfor %}
+                        {% if req_status %}
                       <p>requested project manager to update status to {{ req_status }} </p>
+                        {% endif %}
                     </div>
                   </div>
                 </div>
