@@ -118,7 +118,7 @@
         </div>
         <div class="row">
             <div class="col">
-                {% if status != 'Under Triage' or status != 'Accepted' %}
+            {% if status != 'Under Triage' and status != 'Accepted' %}
                 <button class="btn btn-primary" onclick="openPopup()">Update Status</button>
             {% else %}
                 <button id="updateButton" disabled class="btn btn-primary" onclick="openPopup()">Update Status</button>
@@ -132,21 +132,22 @@
         <div class="popup">
             <button class="close-btn" onclick="closePopup()">X</button>
             <h2>Update Status</h2>
-            <form action="/bug_st_cmt/" method="post">
+            <form action="/bug_testst_cmt/" method="post">
                 {% csrf_token %}
                 <input type="hidden" name="bugid" id="bugid" value="{{ bugid }}">
                 <input type="hidden" name="prevstatus" id="prevstatus" value="{{ status }}">
-                {% if status == 'Under Triage' %}
+                {% if status == 'Not Reproducible' or status == 'Invalid' %}
                 <select id="statusSelect" name="statusSelect" class="form-control mb-3">
-                    <option value="Accepted">Accepted</option>
-                    <option value="Need More Info">Need More Info</option>
-                    <option value="Not Reproducible">Not Reproducible</option>
-                    <option value="Invalid">Invalid</option>
+                    <option value="Under Triage">Under Triage</option>
+                    <option value="Closed">Closed</option>
                 </select>
-                {% elif status == 'Accepted' %}
+                {% elif status == 'Need More Info' %}
                 <select id="statusSelect" name="statusSelect" class="form-control mb-3">
-                    <option value="Fixed">Fixed</option>
-                    <option value="Need More Info">Need More Info</option>
+                    <option value="Under Triage">Under Triage</option>
+                </select>
+                {% elif status == 'Fixed' %}
+                <select id="statusSelect" name="statusSelect" class="form-control mb-3">
+                    <option value="Validated and Closed">Validated and Closed</option>
                 </select>
                 {% endif %}
 

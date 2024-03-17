@@ -67,6 +67,25 @@ def bug_comments(request):
     context={'info':st,'id':id,'desc':desc,'bugid':bugid,'status':status,'comments':comments}
     return render(request,'bugcomments1.html',context)
 
+def bug_testst_cmt(request):
+    conn = mysql.connector.connect(**config)
+    cursor = conn.cursor()
+    bugid=request.POST.get('bugid')
+    id=bugid
+    request.session['bug_id'] = id
+    status=request.POST.get('statusSelect')
+    comment=request.POST.get('comment-box')
+    prevstatus=request.POST.get('prevstatus')
+    query=f"update bugdata set status='{status}' where bug_id={bugid}"
+    cursor.execute(query)
+    conn.commit()
+    st='Tester SET '+prevstatus+' -> '+status
+    print(st)
+    query=f'''insert into bug_comments(bug_id,status_updation,comment,commented_at) values({bugid},'{st}',"{comment}",CURRENT_TIMESTAMP)'''
+    cursor.execute(query)
+    conn.commit()
+    return redirect('bug_comments_tester')
+
 def bug_st_cmt(request):
     conn = mysql.connector.connect(**config)
     cursor = conn.cursor()
@@ -519,8 +538,6 @@ def bug_comments_tester(request):
     if id is None:
         id = request.session.get('bug_id')
     if id is None:
-        # Handle the case when bug_id is not found
-        # For example, redirect the user to an error page or display a message
         return HttpResponse("Bug ID not found")
     st=f"bug id {id}'s bug comments page"
     print(st)
