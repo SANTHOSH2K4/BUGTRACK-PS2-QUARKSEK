@@ -58,7 +58,7 @@
                           id="openComment"
                           onclick="openpopup()"
                         >
-                          Update Test Status
+                          Request for Status Updation
                         </button>
                       </div>
                     </div>
@@ -72,7 +72,9 @@
                         <li class="list-group-item">{{item.2}}</li>
                         <li class="list-group-item">{{item.5}}</li>
                       </ul>
+                      {% if item.5 != 'Request Accepted' %}
                       <div class="card-body">
+      
                         <button
                           type="button"
                           class="btn btn-primary"
@@ -97,8 +99,10 @@
                             View Bugs
                           </button>
                         </form>
-                        {% endfor %}
                       </div>
+                      {% endif %}
+                        {% endfor %}
+                      
                     </div>
                   </div>
                 </div>

@@ -152,6 +152,8 @@
                     <th>Customer Name</th>
                     <th>Assigned Tester ID</th>
                     <th>Status</th>
+                    <th>Tester Needs</th>
+                    <th>Comment by Tester</th>
                 </tr>
             </thead>
             <tbody>
@@ -167,7 +169,8 @@
                         {{ request.4 }}
                         <button class="btn update-status-btn" id="btnforcomp" onclick="openStatusPopup(' {{ request.0 }} ','{{ request.4 }}')">Update Status</button>
                     </td>
-                
+                    <td>{{ request.6 }}</td>
+                    <td>{{ request.7 }}</td>
                 </tr>
                 {% endfor %}
                 

@@ -118,8 +118,12 @@
         </div>
         <div class="row">
             <div class="col">
-                {% if status == 'Under Triage' or status == 'Accepted' %}
+                {% if status == 'Under Triage' or status == 'Accepted' or request_status == 'Testing Completed' %}
+                {% if request_status != 'Testing Completed' %}
                 <button class="btn btn-primary" onclick="openPopup()">Update Status</button>
+                {% elif request_status == 'Testing Completed' %}
+                <button id="updateButton" disabled class="btn btn-primary" onclick="openPopup()">Update Status</button>
+                {% endif %}
             {% else %}
                 <button id="updateButton" disabled class="btn btn-primary" onclick="openPopup()">Update Status</button>
             {% endif %}

@@ -53,18 +53,25 @@ def bug_comments(request):
     print(st)
     conn = mysql.connector.connect(**config)
     cursor = conn.cursor()
-    query=f"select description,bug_id,status from bugdata where bug_id={id}"
+    query=f"select description,bug_id,status,id from bugdata where bug_id={id}"
     cursor.execute(query)
     bug_data=cursor.fetchall()
     print(bug_data)
     desc=bug_data[0][0]
     bugid= bug_data[0][1]
     status=bug_data[0][2]
+    req_id=bug_data[0][3]
     query = f"SELECT status_updation, comment, commented_at FROM bug_comments WHERE bug_id = {id} ORDER BY commented_at DESC"
     cursor.execute(query)
     comments=cursor.fetchall()
     print(comments)
-    context={'info':st,'id':id,'desc':desc,'bugid':bugid,'status':status,'comments':comments}
+    query=f"select status from requests where req_ID={req_id}"
+    cursor.execute(query)
+    rows=cursor.fetchall()
+    request_status= rows[0][0]
+
+
+    context={'info':st,'id':id,'desc':desc,'bugid':bugid,'status':status,'comments':comments,'request_status':request_status}
     return render(request,'bugcomments1.html',context)
 
 def bug_testst_cmt(request):
@@ -377,7 +384,7 @@ def assigned_requests(request):
     cursor = conn.cursor()
 
     # Fetch data from the database for the first query
-    query = "SELECT CAST(req_ID AS CHAR), requested_at, url, fname, status,assignedto FROM requests where status != 'Under Review'"
+    query = "SELECT CAST(req_ID AS CHAR), requested_at, url, fname, status,assignedto,test_status,tester_comment FROM requests where status != 'Under Review'"
     cursor.execute(query)
     rows = cursor.fetchall()
 
@@ -521,7 +528,7 @@ def manager_comment(request):
             tester_comment = request.POST.get('comment')
             connection = mysql.connector.connect(**config)
             cursor = connection.cursor()
-            cursor.execute(f"UPDATE requests SET test_status = '{test_status}', tester_comment = '{tester_comment}' WHERE id = {id}")
+            cursor.execute(f"UPDATE requests SET test_status = '{test_status}', tester_comment = '{tester_comment}' WHERE req_ID = {id}")
             connection.commit()
     except mysql.connector.Error as err:
         print("Error:", err)
@@ -543,18 +550,24 @@ def bug_comments_tester(request):
     print(st)
     conn = mysql.connector.connect(**config)
     cursor = conn.cursor()
-    query=f"select description,bug_id,status from bugdata where bug_id={id}"
+    query=f"select description,bug_id,status,id from bugdata where bug_id={id}"
     cursor.execute(query)
     bug_data=cursor.fetchall()
     print(bug_data)
     desc=bug_data[0][0]
     bugid= bug_data[0][1]
     status=bug_data[0][2]
+    req_id=bug_data[0][3]
     query = f"SELECT status_updation, comment, commented_at FROM bug_comments WHERE bug_id = {id} ORDER BY commented_at DESC"
     cursor.execute(query)
     comments=cursor.fetchall()
     print(comments)
-    context={'info':st,'id':id,'desc':desc,'bugid':bugid,'status':status,'comments':comments}
+    query=f"select status from requests where req_ID={req_id}"
+    cursor.execute(query)
+    rows=cursor.fetchall()
+    request_status= rows[0][0]
+
+    context={'info':st,'id':id,'desc':desc,'bugid':bugid,'status':status,'comments':comments,'request_status':request_status}
     return render(request,'bugcommentstester.html',context)
 
 
