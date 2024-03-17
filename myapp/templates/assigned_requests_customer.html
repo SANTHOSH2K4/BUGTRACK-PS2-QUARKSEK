@@ -166,8 +166,8 @@
     <nav>
         <ul>
             <li><a href ='/manager_home/'>Home</a></li>
-            <li ><a href="{% url 'testing_requests'%}">Pending Requests Notifications</a></li>
-            <li class="active"><a href="{% url 'assigned_requests'%}" >Assigned Requests Notifications</a></li>
+            <li ><form action="/customer_requests/" method="post">{% csrf_token %}<input type="hidden" name="custID" value="{{ ID }}"><button type="submit">Pending Requests for Customer {{ ID }}</button></form></li>
+            <li class="active"><form action="/assigned_requests_customer/" method="post">{% csrf_token %}<input type="hidden" name="custID" value="{{ ID }}"><button type="submit">Assigned Requests for Customer {{ ID }}</button></form></li>
         </ul>
     </nav>
     <div class="container">

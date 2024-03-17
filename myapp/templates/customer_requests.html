@@ -190,15 +190,15 @@ th {
     <nav>
         <ul>
             <li><a href ='/manager_home/'>Home</a></li>
-            <li class="active"><a href="{% url 'customer_requests'%}">Pending Requests Notifications</a></li>
-            <li ><a href="{% url 'assigned_requests_customer'%}" >Assigned Requests Notifications</a></li>
+            <li class="active"><form action="/customer_requests/" method="post">{% csrf_token %}<input type="hidden" name="custID" value="{{ ID }}"><button type="submit">Pending Requests for Customer {{ ID }}</button></form></li>
+            <li class="active"><form action="/assigned_requests_customer/" method="post">{% csrf_token %}<input type="hidden" name="custID" value="{{ ID }}"><button>Assigned Requests for Customer {{ ID }}</button></form></li>
         </ul>
     </nav>
     <div class="container">
         <h1>Testing Requests Dashboard</h1>
 
         {% if rows %}
-        <h2>All Customers and Their Testing Requests</h2>
+        <h2>Customer {{ ID }} Testing Requests</h2>
         <table>
             <thead>
                 <tr>
