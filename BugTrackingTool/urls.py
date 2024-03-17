@@ -27,6 +27,7 @@ urlpatterns = [
     path('plog/',views.plog,name='plog'), 
     path('creg/',views.creg,name='creg'),
     path('treg/',views.treg,name='treg'),
+    path('bug_comments_tester/',views.bug_comments_tester,name='bug_comments_tester'),
     path('newTester/',views.newTester,name='newTester'),
     path('bugs/',views.bugs,name='bugs'),
     path('bugraise/',views.bugraise,name='bugraise'),

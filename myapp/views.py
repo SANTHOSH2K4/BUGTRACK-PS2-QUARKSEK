@@ -114,28 +114,35 @@ def clog(request):
 
 
 def tlog(request):
-     em=request.POST.get('em')
-     pw=request.POST.get('pw')
-     conn = mysql.connector.connect(**config)
-     cursor = conn.cursor()
-     res=''
-     context={'show_inv_alert':'True','ul': 't','showreg':'True','alert_message':'Invalid Credentials'}
-     try:
-         query=f"select email from testers where email='{em}' and pass='{pw}'"
-         cursor.execute(query)
-         rows=cursor.fetchall()
-         cursor.close()
-         conn.close()
-         if(rows[0][0] == em):
-             
-             res= 'login success'
-             return HttpResponse('Tester page!')
-         else:
-             res= 'Invalid Credentials'
-             return render(request,'login.html',context)
-     except Exception as e:
-         res= 'Invalid Credentials'
-         return render(request,'login.html',context)
+    em=request.POST.get('em')
+    pw=request.POST.get('pw')
+    conn = mysql.connector.connect(**config)
+    cursor = conn.cursor()
+    res=''
+    context={'show_inv_alert':'True','ul': 't','showreg':'True','alert_message':'Invalid Credentials'}
+    try:
+        query = f"SELECT email,id FROM testers WHERE email='{em}' AND pass='{pw}'"
+        cursor.execute(query)
+        rows = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        
+        if rows:  # Check if rows is not None
+            id = rows[0][1]  # This should be corrected to rows[0] if email is the first column
+            request.session['tester_ID'] = id
+            res = 'login success'
+            return redirect('newTester')
+        else:
+            res = 'Invalid Credentials'
+            context['alert'] = 'Invalid email or password'  # Add alert message to the context
+            context['pwalert'] = ''  # Add empty pwalert to avoid rendering issues
+            return render(request, 'login.html', context)
+    except Exception as e:
+        res = 'Invalid Credentials'
+        context['alert'] = 'Invalid email or password'  # Add alert message to the context
+        context['pwalert'] = ''  # Add empty pwalert to avoid rendering issues
+        return render(request, 'login.html', context)
+
 
 
 
@@ -252,6 +259,7 @@ def submit_url(request):
     finally:
             cursor.close()
             connection.close()
+
     
     return redirect('user_home')
 
@@ -421,7 +429,10 @@ def assigntotester(request):
 
 
 def newTester(request):
-    id = int(2)
+    id = int(request.session.get('tester_ID'))
+    print('ID ',id)
+
+    rows=[]
     try:
         connection = mysql.connector.connect(**config)
         cursor = connection.cursor()
@@ -433,6 +444,8 @@ def newTester(request):
         print(rows)
     except mysql.connector.Error as err:
         print("Error:", err)
+        err+='id is'+id
+        return HttpResponse(err)
     finally:
             cursor.close() 
             connection.close()
@@ -442,7 +455,7 @@ def bugraise(request):
     print("from bugraise")
     try:
         if request.method=="POST":
-            print("inside the bug")
+            print("inside the bug input ")
             req_ID = int(request.POST.get('req_ID'))
             print(req_ID)
             bugname = request.POST.get('bugName')
@@ -489,7 +502,7 @@ def manager_comment(request):
             tester_comment = request.POST.get('comment')
             connection = mysql.connector.connect(**config)
             cursor = connection.cursor()
-            cursor.execute(f"UPDATE bugdata SET test_status = '{test_status}', tester_comment = '{tester_comment}' WHERE id = {id}")
+            cursor.execute(f"UPDATE requests SET test_status = '{test_status}', tester_comment = '{tester_comment}' WHERE id = {id}")
             connection.commit()
     except mysql.connector.Error as err:
         print("Error:", err)
@@ -502,7 +515,31 @@ def manager_comment(request):
      
 
 def bug_comments_tester(request):
-     return render(request,'bugcomments1.html')
+    id=request.POST.get('bug_id')
+    if id is None:
+        id = request.session.get('bug_id')
+    if id is None:
+        # Handle the case when bug_id is not found
+        # For example, redirect the user to an error page or display a message
+        return HttpResponse("Bug ID not found")
+    st=f"bug id {id}'s bug comments page"
+    print(st)
+    conn = mysql.connector.connect(**config)
+    cursor = conn.cursor()
+    query=f"select description,bug_id,status from bugdata where bug_id={id}"
+    cursor.execute(query)
+    bug_data=cursor.fetchall()
+    print(bug_data)
+    desc=bug_data[0][0]
+    bugid= bug_data[0][1]
+    status=bug_data[0][2]
+    query = f"SELECT status_updation, comment, commented_at FROM bug_comments WHERE bug_id = {id} ORDER BY commented_at DESC"
+    cursor.execute(query)
+    comments=cursor.fetchall()
+    print(comments)
+    context={'info':st,'id':id,'desc':desc,'bugid':bugid,'status':status,'comments':comments}
+    return render(request,'bugcommentstester.html',context)
+
 
      
     
