@@ -17,7 +17,7 @@
         <div class="col-2 sidebar">
           <a class="active" href="{% url 'newTester' %}">Home</a>
           <a href="{% url 'newTester' %}">New Requests</a>
-          <a href="#">Bugs</a>
+          <a href="#">Raised Bugs</a>
         </div>
     <!-- 
         <div class="col-10 d-flex justify-content-center align-items-center">
@@ -36,7 +36,9 @@
       <div class="row">
           <div class="col"></div>
           <div class="col-8">
+            {% if data %}
               <div class="table-container">
+                
                   <table class="table table-hover">
                       <thead>
                           <tr>
@@ -71,6 +73,11 @@
                       </tbody>
                   </table>
               </div>
+              {% else %}
+              <br>
+              <br>
+              <h3>No bugs raised for this request yet</h3>
+              {% endif %}
           </div>
           <div class="col"></div>
       </div>

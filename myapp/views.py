@@ -173,28 +173,29 @@ def tlog(request):
 
 
 def plog(request):
-     em=request.POST.get('em')
-     pw=request.POST.get('pw')
-     conn = mysql.connector.connect(**config)
-     cursor = conn.cursor()
-     res=''
-     context={'show_inv_alert':'True','ul': 'p','showreg':'True','alert_message':'Invalid Credentials'}
-     try:
-         query=f"select email from project_manager where email='{em}' and password='{pw}'"
-         cursor.execute(query)
-         rows=cursor.fetchall()
-         cursor.close()
-         conn.close()
-         if(rows[0][0] == em):
-             
-             res= 'login success'
-             return redirect('testing_requests')
-         else:
-             res= 'Invalid Credentials'
-             return render(request,'login.html',context)
-     except Exception as e:
-         res= 'Invalid Credentials'
-         return render(request,'login.html',context)
+    em = request.POST.get('em')
+    pw = request.POST.get('pw')
+    conn = mysql.connector.connect(**config)
+    cursor = conn.cursor()
+    res = ''
+    context = {'show_inv_alert': 'True', 'ul': 'p', 'showreg': 'True', 'alert_message': 'Invalid Credentials'}
+    
+    try:
+        query = "SELECT email FROM project_manager WHERE email = %s AND password = %s"
+        cursor.execute(query, (em, pw))
+        row = cursor.fetchone()
+        cursor.close()
+        conn.close()
+        
+        if row and row[0] == em:
+            res = 'login success'
+            return redirect('manager_home')
+        else:
+            res = 'Invalid Credentials'
+            return render(request, 'login.html', context)
+    except Exception as e:
+        res = 'Invalid Credentials'
+        return render(request, 'login.html', context)
      
 
 def creg(request):
@@ -468,6 +469,15 @@ def newTester(request):
         rows = cursor.fetchall()
         print(data)
         print(rows)
+        req_ID=int(data[0][3])
+        cursor.execute(f"select test_status,tester_comment from requests where req_ID={req_ID}")
+        row=cursor.fetchall()
+        req_status=row[0][0]
+        req_status_desc=row[0][1]
+        if req_status is None:
+            req_status == ''
+        if req_status_desc is None:
+            req_status_desc==''
     except mysql.connector.Error as err:
         print("Error:", err)
         err+='id is'+id
@@ -475,7 +485,7 @@ def newTester(request):
     finally:
             cursor.close() 
             connection.close()
-    return render(request,'newTester.html',{'data':data,'rows':rows})
+    return render(request,'newTester.html',{'data':data,'rows':rows,'req_status':req_status,'req_status_desc':req_status_desc})
 
 def bugraise(request):
     print("from bugraise")
@@ -569,6 +579,50 @@ def bug_comments_tester(request):
 
     context={'info':st,'id':id,'desc':desc,'bugid':bugid,'status':status,'comments':comments,'request_status':request_status}
     return render(request,'bugcommentstester.html',context)
+
+def manager_home(request):
+    try:
+        connection = mysql.connector.connect(**config)
+        cursor = connection.cursor()
+        cursor.execute(f"SELECT id , fname , email FROM customers")
+        data = cursor.fetchall()
+        print(data)
+    except mysql.connector.Error as err:
+        print("Error:", err)
+    finally:
+            cursor.close()
+            connection.close()
+    return render(request,'manager_home.html',{'data':data})
+
+def customer_requests(request):
+    custid = int(request.POST.get('custID'))
+    print(custid)
+    conn = mysql.connector.connect(**config)
+    cursor = conn.cursor()
+
+    # Fetch data from the database for the first query
+    query = f"SELECT CAST(req_ID AS CHAR), requested_at, url, fname, status FROM requests where assignedto = -1 and status != 'Testing Completed' and ID = {custid} "
+    cursor.execute(query)
+    rows = cursor.fetchall()
+
+
+
+
+
+
+
+    # Close cursor and connection
+    cursor.close()
+    conn.close()
+
+    context = {
+        'rows': rows,
+    }
+
+    # Render the template with context data
+    return render(request, 'customer_requests.html', context)
+
+
 
 
      

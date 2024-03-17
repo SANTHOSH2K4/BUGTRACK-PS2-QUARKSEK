@@ -190,8 +190,8 @@ th {
     <nav>
         <ul>
             <li><a href ='/manager_home/'>Home</a></li>
-            <li {% if request.resolver_match.url_name == 'testing_requests' %}class="active"{% endif %}><a href="{% url 'testing_requests'%}">Pending Requests Notifications</a></li>
-            <li {% if request.resolver_match.url_name == 'assigned_requests' %}class="active"{% endif %}><a href="{% url 'assigned_requests'%}" >Assigned Requests Notifications</a></li>
+            <li class="active"><a href="{% url 'customer_requests'%}">Pending Requests Notifications</a></li>
+            <li ><a href="{% url 'assigned_requests_customer'%}" >Assigned Requests Notifications</a></li>
         </ul>
     </nav>
     <div class="container">

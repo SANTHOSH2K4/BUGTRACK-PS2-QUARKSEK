@@ -22,6 +22,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('',views.index,name='index'),
     path('user/',views.user,name='user'),
+    path('manager_home/',views.manager_home,name='manager_home'),
+    path('customer_requests/',views.customer_requests,name='customer_requests'),
     path('clog/',views.clog,name='clog'),
     path('tlog/',views.tlog,name='tlog'),
     path('plog/',views.plog,name='plog'), 
