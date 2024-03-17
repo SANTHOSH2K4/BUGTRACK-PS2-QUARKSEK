@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bug Tracking Tool</title>
+    {% load static %}
+    <link rel="stylesheet" href="{%  static 'css/logreg.css' %}" >
+    <style>
+        .banner {
+            width: 100;
+            height: 100vh;
+            background-image: url('{% static "images/3409.jpg" %}');
+            background-size: cover;
+            background-position: center;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+    </style>
+    
+</head>
+<body>
+    
+    <div class="banner">
+        <div class="wrapper">
+            <div class="form-box login">
+                <h2>Login</h2>
+                <form action="/{{ ul }}log/" method="post">
+                    {% csrf_token %}
+                    <div class="input-box">
+                        <input type="email" name="em" required>
+                        <label>Email</label>
+                        <h3>{{alert}}</h3>
+                    </div>
+                    <div class="input-box">
+                        <input type="password" name="pw"required>
+                        <label>Password</label>
+                        <h3>{{pwalert}}</h3>
+                    </div>
+
+                    <button type="submit" class="btn">Login</button>
+                    {% if showreg == 'True' %}
+                    <div class="login-register">
+                        <p>Don't have an account?<p></p><a href="#" class="register-link">Register</a></p>
+                    </div>
+                    {% endif %}
+                </form>
+            </div>
+            <div class="form-box register">
+                <h2>Registeration</h2>
+                <form action="/{{ ul }}reg/" method="post">
+                    {% csrf_token %}
+                    <div class="input-box">
+                        <input type="text" name="fname" required>
+                        <label>Username</label>
+                    </div>
+                    <div class="input-box">
+                        <input type="text" name="em" required>
+                        <label>Email</label>
+                    </div>
+                    <div class="input-box">
+                        <input type="password" name="pw" required>
+                        <label>Password</label>
+                    </div>
+                    <!-- <div class="remember-forgot">
+                        <label><input type="checkbox">Remember Me</label><a class="Forgot"href="#">Forgot Password?</a>
+                    </div> -->
+                    <button type="submit" class="btn">Register</button>
+                    
+                    <div class="login-register">
+                        <p>Have an account?<p></p><a href="#" class="login-link">Login</a></p>
+                    </div>
+                    
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="{% static 'js/login.js'%}"></script>
+    {% if show_inv_alert == 'True' %}
+    <script>
+    setTimeout(function() {
+        alert("{{alert_message}}");
+    }, 300);
+    </script>
+    {% endif %}
+    
+</body>
+</html>

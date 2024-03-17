@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testing Requests Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff; /* Sky Blue */
+            color: #333; /* Dark Grey */
+            margin: 0;
+            padding: 0;
+        }
+        nav {
+            background-color: #007bff; /* Sky Blue */
+            padding: 10px;
+            text-align: center;
+        }
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        nav ul li {
+            display: inline;
+            margin-right: 10px;
+        }
+        nav ul li a {
+            color: #fff; /* White */
+            text-decoration: none;
+        }
+        nav ul li a:hover {
+            text-decoration: underline;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff; /* White */
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #007bff; /* Sky Blue */
+        }
+        h2 {
+            color: #333; /* Dark Grey */
+            margin-top: 30px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd; /* Light Grey */
+        }
+        th {
+            background-color: #f0f8ff; /* Sky Blue */
+        }
+        .update-status-btn {
+            padding: 5px 10px; /* Adjust padding to reduce button size */
+        }
+        .action-column {
+            width: 120px; /* Set a fixed width for the action column */
+        }
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+            z-index: 999; /* Ensure it's above other content */
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+        .popup {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    width: 400px; /* Increase the width as needed */
+    text-align: center;
+    position: relative;
+}
+
+        .popup-close {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            color: #555; /* Dark Grey */
+        }
+        .popup-close:hover {
+            color: #000; /* Black */
+        }
+        .popup-title {
+            color: #007bff; /* Sky Blue */
+            margin-bottom: 15px;
+        }
+        .popup-description {
+            color: #333; /* Dark Grey */
+            margin-bottom: 20px;
+        }
+        .popup-update-btn {
+            background-color: #007bff; /* Sky Blue */
+            color: #fff; /* White */
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        .popup-update-btn:hover {
+            background-color: #0056b3; /* Darker Sky Blue */
+        }
+        .tester-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px; /* Increase the margin-bottom as needed */
+}
+
+        .active a {
+            background-color: #0056b3; /* Darker Sky Blue */
+            color: #fff; /* White */
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li {% if request.resolver_match.url_name == 'testing_requests' %}class="active"{% endif %}><a href="{% url 'testing_requests'%}">Pending Requests</a></li>
+            <li {% if request.resolver_match.url_name == 'assigned_requests' %}class="active"{% endif %}><a href="{% url 'assigned_requests'%}" >Assigned Requests</a></li>
+        </ul>
+    </nav>
+    <div class="container">
+        <h1>Testing Requests Dashboard</h1>
+
+        {% if rows %}
+        <h2>All Customers and Their Testing Requests</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Date</th>
+                    <th>URL</th>
+                    <th>Customer Name</th>
+                    <th>Status</th>
+                    <th class="action-column">Action</th> <!-- Add class for the action column -->
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Update the table rows to display date, URL, and action buttons -->
+                {% for request in rows %}
+                <tr>
+                    <td>{{ request.0 }}</td>
+                    <td>{{ request.1}}</td>
+                    <td><a href="{{ request.2 }}">{{ request.2 }}</a></td>
+                    <td>{{ request.3 }}</td>
+                    <td class="status" data-customer="Customer A">
+                        {{ request.4 }}
+                    </td>
+                    <td class="action-column">
+                        
+                        <button class="btn assign-btn" onclick="openAssignPopup('Assign Tester', '{{ request.0 }}')">Assign Tester</button>
+                        
+                    </td>
+                </tr>
+
+                {% endfor %}
+                
+                <!-- Add more rows as needed -->
+            </tbody>
+        </table>
+        {% else %}
+        <h3> There is no request from</h3>
+        {% endif %}
+    </div>
+    <div class="popup-overlay" id="popupOverlay">
+
+        <div class="popup">
+            <span class="popup-close" onclick="closePopup()">X</span>
+            <h2 id="popupTitle"></h2>
+            <p id="popupDescription"></p>
+            <div id="popupTesters"></div>
+        </div>
+    </div>
+{% if show_alert == 'True' %}
+    <script>
+        // Function to display alert after 3 seconds
+        function delayedAlert() {
+            setTimeout(function() {
+                alert('{{ res }}');
+            }, 300); // 3000 milliseconds = 3 seconds
+        }
+
+        // Call the function after the page has loaded
+        window.onload = delayedAlert;
+    </script>
+{% endif %}
+<script>
+      
+
+       function openAssignPopup(title, id) {
+    var popupOverlay = document.getElementById('popupOverlay');
+    var popupTitle = document.getElementById('popupTitle');
+    var popupDescription = document.getElementById('popupDescription');
+    var popupTesters = document.getElementById('popupTesters');
+
+    popupTitle.textContent = title;
+    popupDescription.textContent = 'Assign an available tester for ID no ' + id;
+
+    // Make an AJAX request to fetch available testers
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == XMLHttpRequest.DONE) {
+            if (xhr.status == 200) {
+                // Update popupTesters with the fetched data
+                popupTesters.innerHTML = xhr.responseText;
+            } else {
+                console.error('Error fetching available testers:', xhr.status);
+            }
+        }
+    };
+
+    // Open the request before setting the request headers
+    xhr.open('POST', '/avail_testers/', true);
+    
+    // Add CSRF token to the request headers
+    xhr.setRequestHeader('X-CSRFToken', getCookie('csrftoken'));
+
+    // Send the request after setting the request headers
+    xhr.send(JSON.stringify({id: id})); // Send the ID as JSON in the request body
+
+    popupOverlay.style.display = 'flex'; 
+}
+
+// Function to retrieve the CSRF token from cookies
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            // Check if the cookie contains the CSRF token
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+
+
+        function assignTester(customerName, testerName) {
+            alert('Assigned ' + testerName + ' to ' + customerName);
+            closePopup(); 
+        }
+
+        function closePopup() {
+            var popupOverlay = document.getElementById('popupOverlay');
+            popupOverlay.style.display = 'none'; 
+        }
+            
+    </script>
+</body>
+</html>

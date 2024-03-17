@@ -1,0 +1,183 @@
+.sidebar {
+  margin: 0;
+  padding: 0;
+  width: 200px;
+  background-color: #f1f1f1;
+  position: fixed;
+  top: 0;
+  height: 100%;
+  overflow: auto;
+}
+
+/* Sidebar links */
+.sidebar a {
+  display: block;
+  color: black;
+  padding: 16px;
+  text-decoration: none;
+}
+
+/* Active/current link */
+.sidebar a.active {
+  background-color: #04aa6d;
+  color: white;
+}
+
+/* Links on mouse-over */
+.sidebar a:hover:not(.active) {
+  background-color: #555;
+  color: white;
+}
+
+/* Page content. The value of the margin-left property should match the value of the sidebar's width property */
+div.content {
+  margin-left: 200px;
+  padding: 1px 16px;
+  height: 1000px;
+}
+
+/* On screens that are less than 700px wide, make the sidebar into a topbar */
+@media screen and (max-width: 700px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+  }
+  .sidebar a {
+    float: left;
+  }
+  div.content {
+    margin-left: 0;
+  }
+}
+
+/* On screens that are less than 400px, display the bar vertically, instead of horizontally */
+@media screen and (max-width: 400px) {
+  .sidebar a {
+    text-align: center;
+    float: none;
+  }
+}
+.cardCon {
+  display: flex;
+  justify-content: center;
+  margin-top: 10vh;
+}
+
+/* Styles for modal */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.5);
+  overflow: auto;
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  border-radius: 5px;
+  max-width: 400px;
+  width: 100%;
+}
+
+.close {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.close:hover {
+  color: red;
+}
+
+/* Styles for form */
+.form-group {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  font-weight: bold;
+}
+
+input[type="text"],
+select,
+textarea {
+  width: calc(100% - 20px); /* Adjust input width to accommodate padding */
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+button[type="submit"] {
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button[type="submit"]:hover {
+  background-color: #0056b3;
+}
+
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+.popup {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  max-width: 400px;
+  position: relative;
+}
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 20px;
+  color: #555;
+  cursor: pointer;
+}
+.input-field {
+  width: calc(100% - 20px);
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+.submit-btn {
+  background-color: #28a745;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+.submit-btn:hover {
+  background-color: #218838;
+}

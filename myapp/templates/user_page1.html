@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BTrack Dashboard</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Reset some default styling */
+        body, h1, h3 {
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+        }
+
+        #logo {
+            font-size: larger;
+        }
+
+        main {
+            text-align: center;
+            margin-top: 40px; /* Increased margin for better spacing */
+            position: relative; /* Position relative for absolute positioning of the modal */
+        }
+
+        #new-request {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: purple; /* Button color */
+            color: white; /* Text color */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease; /* Smooth transition */
+        }
+
+        #new-request:hover {
+            background-color: #6a5acd; /* Darker purple on hover */
+        }
+
+        .request-card {
+            margin-top: 20px;
+            background-color: #f9f9f9; /* Light gray background */
+            border-radius: 10px; /* Rounded corners */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Box shadow for depth */
+            padding: 20px; /* Increased padding for better spacing */
+        }
+
+        .details-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start; /* Align items to the start */
+            margin-top: 10px;
+        }
+
+        .view-details {
+            padding: 8px 16px; /* Padding on the button */
+            background-color: purple; /* Button color */
+            color: white; /* Text color */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease; /* Smooth transition */
+        }
+
+        .view-details:hover {
+            background-color: #6a5acd; /* Darker purple on hover */
+        }
+
+        /* Styling for the logo text */
+        #logo {
+            background-color: #f9f9f9; /* Light gray background */
+            padding: 5px 10px; /* Padding around the text */
+            border-radius: 5px; /* Rounded corners */
+        }
+        
+        /* Centering the "Welcome to BTrack" text */
+        h1 {
+            margin-top: 20px; /* Added margin for spacing */
+        }
+
+        /* Black line between "Welcome to BTrack" and "New Request" */
+        hr {
+            border: none;
+            border-top: 2px solid black;
+            margin: 20px auto; /* Centering the line */
+            width: 50%;
+        }
+
+        /* Style for the heading above the cards */
+        .prevh3 {
+            margin-top: 20px; /* Added margin for spacing */
+            text-align: left; /* Align heading to the left */
+            margin-left: calc(50% - 550px);
+        }
+
+        /* Style for the details inside the card */
+        .request-card div {
+            text-align: left; /* Align text inside the card to the left */
+        }
+
+        /* Modal styling */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* Black with 50% opacity */
+            display: none; /* Initially hidden */
+            justify-content: center;
+            align-items: center;
+            z-index: 1000; /* Ensure it's on top of everything */
+        }
+
+        .modal {
+            background-color: rgba(0, 0, 0, 0.8); /* Black with 80% opacity */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            position: absolute; /* Position absolute for proper positioning */
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .modal-content {
+            background-color: #fff; /* White background */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            color: #fff; /* White color for close button */
+            font-size: 20px;
+            padding: 5px;
+        }
+        @media only screen and (max-width: 767px) {
+    /* Center the h3 element */
+    .prevh3 {
+        margin-left: auto;
+        margin-right: auto;
+        text-align: center;
+    }
+
+    /* Adjust margin for the logo */
+    #logo {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /* Adjust width of the hr element */
+    hr {
+        width: 70%; /* Adjust as needed */
+    }
+
+    /* Adjust margin for modal */
+    .modal {
+        width: 80%; /* Adjust as needed */
+    }
+}
+    </style>
+</head>
+<body>
+
+<header>
+    <div id="logo">BTrack <span class="badge badge-secondary">Dashboard</span></div>
+</header>
+
+<main>
+    {% if show_newrequests == 'True' %}
+    <h1>Welcome to BTrack</h1>
+    <hr>
+    <button id="new-request">New Request</button>
+    {% else %}
+    <h3 class="prevh3">Current Requests</h3>
+    <section id="previous-requests" class="container">
+    <div class="row">
+        <div class="col">
+            <div class="request-card">
+                <div class="details-container" >
+                    <div id="current-request">
+                        <p>Requested on: {{ rows.0.1 }}</p>
+                        <p>URL: {{ rows.0.0 }} </p>
+                        <p>Status: {{ rows.0.2 }}</p>
+                        <p>req_ID: {{ rows.0.3 }}</p>
+                    </div>
+                    <div id="curr-request-status">
+                        
+                        <form action="/bug_info/" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="req_ID" id="req_ID" value="{{ rows.0.3 }}">
+                        <button type="submit" class="view-details">View Details</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Add more request cards as needed -->
+    </div>
+</section>
+    {% endif %}
+    {% if show_prevrequests == 'True' %}
+    <h3 class="prevh3">Previous Requests</h3>
+    {% for item in prev_reqrows %}
+    <section id="previous-requests" class="container">
+        <!-- Example of a request card -->
+        <div class="row">
+            <div class="col">
+                <div class="request-card">
+                    <div class="details-container">
+                        <div>
+                            <p>Requested on: {{ item.1 }}</p>
+                            <p>URL: {{ item.0 }}</p>
+                            <p>Status : {{ item.2 }}</p>
+                            <p>req_ID: {{ item.3 }}</p>
+                        </div>
+                        <div>
+                            <form action="/bug_info/" method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="req_ID" id="req_ID" value="{{ item.3 }}">
+                                <button type="submit" class="view-details">View Details</button>
+                                </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Add more request cards as needed -->
+        </div>
+    </section>
+    {% endfor %}
+    {% endif %}
+    <!-- Overlay and modal form -->
+    <div class="overlay" id="overlay">
+        <div class="modal">
+            <div class="modal-content">
+                <button class="close-button" id="close-modal">X</button> <!-- Close button -->
+                <form class="url-form" action="{% url 'submit_url' %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="ID" value="{{ ID }}">
+                    <label for="urlInput" class="url-label">Enter URL:</label>
+                    <input
+                    required
+                    type="text"
+                    id="urlInput"
+                    class="url-input"
+                    name="urlInput"
+                    placeholder="https://example.com"
+                    />
+                    <label for="usernameInput" class="credentials-label">Username:</label>
+                    <input
+                    type="text"
+                    id="usernameInput"
+                    class="credentials-input"
+                    name="usernameInput"
+                    placeholder="Your username"
+                    />
+                    <label for="passwordInput" class="credentials-label">Password:</label>
+                    <input
+                    type="password"
+                    id="passwordInput"
+                    class="credentials-input"
+                    name="passwordInput"
+                    placeholder="Your password"
+                    />
+                    <button type="submit" class="submit-button">Create Request</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+    // JavaScript to handle showing/hiding the overlay and modal
+    const newRequestButton = document.getElementById("new-request");
+    const overlay = document.getElementById("overlay");
+    const modal = document.querySelector(".modal");
+    const closeButton = document.getElementById("close-modal");
+
+    newRequestButton.addEventListener("click", () => {
+        overlay.style.display = "flex"; // Display the overlay when button is clicked
+        modal.style.display = "block"; // Display the modal when button is clicked
+    });
+
+    closeButton.addEventListener("click", () => {
+        overlay.style.display = "none"; // Hide the overlay when close button is clicked
+        modal.style.display = "none"; // Hide the modal when close button is clicked
+    });
+
+
+
+</script>
+<script>
+        $(document).ready(function() {
+            // Function to fetch items via AJAX
+            function fetchItems() {
+                $.ajax({
+                    url: 'curr_request/',
+                    dataType: 'json',
+                    success: function(data) {
+                    // Clear existing items
+                    $('#current-request').empty();
+                    // Add new items
+                    $.each(data.data, function(index, item) {
+                        // Append table row for each item
+                        console.log(item[0],item[1],item[2])
+                        $('#current-request').append('<p>Url: ' + item[0] + '</p><p>Requested_at: ' + item[1] + '</p>');
+                        $('#curr-request-status').append('<h3>' + item[2] +  '</h3>');                            
+                    });
+                }
+                });
+            }
+    
+            // Fetch items initially
+            fetchItems();
+            // Fetch items every 5 seconds
+            setInterval(fetchItems, 5000);
+        });   
+
+</script>
+
+</body>
+</html>

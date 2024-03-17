@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BTT</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+    />
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/newTester.css' %}" />
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+      integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <div class="sidebar">
+      <a class="active" href="{% url 'newTester' %}">Home</a>
+      <a href="">New Requests</a>
+      <a href="{% url 'bugs' %}">Bugs</a>
+    </div>
+    <center>
+      <div style="width: 600px">
+        <h2>Current Requests</h2>
+        <hr class="border border-primary border-3 opacity-75" />
+      </div>
+    </center>
+
+    <center>
+      {% if data %} {% for item in data %}
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col"></div>
+          <div class="col-5">
+            <div class="center-card">
+              <div class="card mb-3">
+                <div class="row g-0">
+                  <div class="col-md-4">
+                    <img
+                      src="{% static 'images/ticket.png' %}"
+                      class="img-fluid rounded-start"
+                      alt="..."
+                    />
+                    <div class="card-body">
+                      <h5 class="card-title">{{item.6}}</h5>
+                      <p class="card-text">Request ID : {{item.3}}</p>
+                      <div class="container mt-2">
+                        <button
+                          class="btn btn-outline-primary"
+                          id="openComment"
+                          onclick="openpopup()"
+                        >
+                          Update Test Status
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-8">
+                    <div class="card-body">
+                      <h5 class="card-title">Request Details</h5>
+                      <ul class="list-group list-group-flush">
+                        <li class="list-group-item">{{item.0}}</li>
+                        <li class="list-group-item">{{item.1}}</li>
+                        <li class="list-group-item">{{item.2}}</li>
+                        <li class="list-group-item">{{item.5}}</li>
+                      </ul>
+                      <div class="card-body">
+                        <button
+                          type="button"
+                          class="btn btn-primary"
+                          id="openBugFormBtn"
+                        >
+                          Create Bugs
+                        </button>
+                        <form action="/bugs/" method="POST">
+                          {% csrf_token %}
+                          <input
+                            type="hidden"
+                            name="req_ID"
+                            id="req_ID"
+                            value="{{item.3}}"
+                          />
+                          <button
+                            type="submit "
+                            class="btn btn-outline-secondary"
+                            id="openBugFormBtn"
+                            onclick="openPopup()"
+                          >
+                            View Bugs
+                          </button>
+                        </form>
+                        {% endfor %}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col"></div>
+        </div>
+      </div>
+      <br />
+
+      {% else %}
+      <h3>You have no Current Request</h3>
+      <br />
+      <br />
+      <br />
+      {% endif %}
+    </center>
+
+    <center>
+      <div style="width: 600px">
+        <h2>Previous Requests</h2>
+        <hr class="border border-primary border-3 opacity-75" />
+      </div>
+    </center>
+
+    <center>
+      {% if rows %} {% for item in rows %}
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col"></div>
+          <div class="col-5">
+            <div class="center-card">
+              <div class="card mb-3">
+                <div class="row g-0">
+                  <div class="col-md-4">
+                    <img
+                      src="{% static 'images/ticket.png' %}"
+                      class="img-fluid rounded-start"
+                      alt="..."
+                    />
+                    <div class="card-body">
+                      <h5 class="card-title">{{item.6}}</h5>
+                      <p class="card-text">Request ID : {{item.3}}</p>
+                    </div>
+                  </div>
+                  <div class="col-md-8">
+                    <div class="card-body">
+                      <h5 class="card-title">Request Details</h5>
+                      <ul class="list-group list-group-flush">
+                        <li class="list-group-item">{{item.0}}</li>
+                        <li class="list-group-item">{{item.1}}</li>
+                        <li class="list-group-item">{{item.2}}</li>
+                        <li class="list-group-item">{{item.5}}</li>
+                      </ul>
+                      <div class="card-body">
+                        <form action="/bugs/" method="POST">
+                          {% csrf_token %}
+                          <input
+                            type="hidden"
+                            name="req_ID"
+                            id="req_ID"
+                            value="{{item.3}}"
+                          />
+                          <button
+                            type="submit  "
+                            class="btn btn-outline-secondary"
+                            id="openBugFormBtn"
+                          >
+                            View Bugs
+                          </button>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col"></div>
+        </div>
+      </div>
+      <br />
+      {% endfor %} {% else %}
+      <h3>You have No Previous Requests</h3>
+      {% endif %}
+    </center>
+
+    <div id="bugFormModal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Create Bug</h2>
+        <form action="/bugraise/" method="POST" id="bugForm">
+          {% csrf_token %}
+          <input type="hidden" name="req_ID" id="req_ID" value="{{data.0.3}}" />
+          <div class="form-group">
+            <label for="bugName">Bug Name:</label>
+            <input type="text" id="bugName" name="bugName" required />
+          </div>
+          <div class="form-group">
+            <label for="summary">Summary:</label>
+            <input type="text" id="summary" name="summary" required />
+          </div>
+          <div class="form-group">
+            <label for="workflow">Feature/Workflow:</label>
+            <input type="text" id="workflow" name="workflow" required />
+          </div>
+          <div class="form-group">
+            <label for="severity">Severity:</label>
+            <select id="severity" name="severity" required>
+              <option value="Low">Low</option>
+              <option value="Medium">Medium</option>
+              <option value="High">High</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="steps">Steps to Reproduce:</label>
+            <textarea id="steps" name="steps" required></textarea>
+          </div>
+          <button type="submit">Submit</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Popup -->
+    <div class="popup-overlay" id="popupOverlay">
+        <form action="/manager_comment/" method="POST">
+          {% csrf_token %}
+          {% for item in data %}
+          <input
+          type="hidden"
+          name="req_ID"
+          id="req_ID"
+          value="{{item.3}}">
+          {% endfor %}
+            <div class="popup">
+                <span class="close-btn" onclick="closepopup()">&times;</span>
+                <h2>Update Testing Status</h2>
+                <select class="input-field" id="test_status" name="test_status">
+                  <option value="Testing In Progress">Testing In Progress</option>
+                  <option value="Testing Blocked">Testing Blocked</option>
+                  <option value="Testing Completed">Testing Completed</option>
+                </select>
+                <textarea
+                id="comment"
+                name="comment"
+                  class="input-field"
+                  rows="4"
+                  placeholder="Add comment"
+                ></textarea>
+                <button type="submit" class="submit-btn">Submit</button>
+            </div>
+          </div>
+        </form>
+      </div>
+      
+    <script>
+      function openpopup() {
+        var popupOverlay = document.getElementById("popupOverlay");
+        popupOverlay.style.display = "flex";
+      }
+
+      function closepopup() {
+        var popupOverlay = document.getElementById("popupOverlay");
+        popupOverlay.style.display = "none";
+      }
+    </script>
+    <script src="{% static 'js/newTester.js' %}"></script>
+<style>
+    .popup-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+      display: none;
+      justify-content: center;
+      align-items: center;
+    }
+    .popup {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+      text-align: center;
+      max-width: 400px;
+      position: relative;
+    }
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 20px;
+      color: #555;
+      cursor: pointer;
+    }
+    .input-field {
+      width: calc(100% - 20px);
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-sizing: border-box;
+    }
+    .submit-btn {
+      background-color: #28a745;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s;
+    }
+    .submit-btn:hover {
+      background-color: #218838;
+    }
+  </style>
+  </body>
+</html>
